@@ -1,0 +1,66 @@
+{
+ "language" : "اللغة",
+  "english" : "الانجليزية",
+  "arabic"  : "العربية",
+  "theme"   : "النمط",
+  "dark"    : "ليلي",
+  "light"   : "نهاري",
+  "logout"  : "تسجيل الخروج",
+  "home"    : "الرئيسية",
+  "map"     : "الخريطة",
+  "fav"     : "المفضلة",
+  "profile" : "الملف الشخصي",
+ "sport":   "رياضة",
+ "birthday": "عيد ميلاد",
+ "gaming": "العاب",
+ "meeting" : "اجتماع",
+  "workshop" : "ورشة عمل",
+   "bookClub" : "نادي الكتب",
+    "holiday"  : "اجازة",
+ "exception"   : "استثناء",
+ "all" : "الكل",
+ "searchEvent": "ابحث عن الحدث",
+ "email"      : "الايميل",
+ "password" : "كلمة المرور",
+ "forgetPassword" : "نسيت كلمة المرور",
+ "login" : "تسجيل الدخول",
+ "or" : "او",
+ "loginWithGoogle" : "تسجيل الدخول بجوجل",
+ "createAccount" : "انشا حساب",
+ "createEvent" : "انشاء ايفنت",
+ "register" : "التسجيل",
+ "name": "الاسم",
+ "dontHaveAccount" : "ليس لدي حساب",
+ "iAlreadyHaveAccount": "لدي حساب بالفعل",
+ "title": " العنوان",
+ "eventTitle": "عنوان الايفنت",
+ "eventDescription": "وصف الايفنت",
+ "description": "الوصف",
+ "chooseDate": "اختيار التاريخ",
+ "chooseTime": "اختيار الوقت",
+ "eventDate": "تاريخ الايفنت",
+ "eventTime": "وقت الايفنت",
+ "chooseEventLocation": "اضف موقع الايفنت",
+ "addEvent": "اضف الايفنت"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
