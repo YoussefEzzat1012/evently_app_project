@@ -35,7 +35,7 @@ This project follows **Clean Architecture** principles:
 
 ## 📸 Screenshots
 
-(Add screenshots here — مهمة جدًا ❗)
+(Add screenshots here)
 
 ---
 
