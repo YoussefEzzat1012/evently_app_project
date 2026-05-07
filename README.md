@@ -53,6 +53,10 @@ This project follows **Clean Architecture** principles:
 ### Favorit Event Screen Dark Mode
 ![Profile](assets/screenShots/createEvent.png)
 
+
+### Favorit Event Screen Dark Mode
+![Profile](assets/screenShots/favoritDark.png)
+
 ### Favorit Event Screen Dark Mode
 ![Profile](assets/screenShots/profileScreen.png)
 
