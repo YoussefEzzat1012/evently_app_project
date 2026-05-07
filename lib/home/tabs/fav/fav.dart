@@ -26,7 +26,7 @@ class _FavTabState extends State<FavTab> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // ✅ بنجيب الـ provider هنا صح
       eventListProvider = Provider.of<EventListProvider>(context, listen: false);
-      eventListProvider.getAllFavoriteEvents();
+      eventListProvider.getAllFavoriteEventsFromFireStore();
     });
   }
 
