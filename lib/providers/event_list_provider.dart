@@ -37,22 +37,19 @@ class EventListProvider extends ChangeNotifier {
 
   void getAllEvents() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection().get();
+        await FirebaseUtils.getEventCollection().get();
 
     filterNameList = mapEvents(querySnapshot);
     eventList = filterNameList;
 
-    filterNameList.sort((a, b) =>
-        a.eventDateTime.compareTo(b.eventDateTime));
+    filterNameList.sort((a, b) => a.eventDateTime.compareTo(b.eventDateTime));
 
     notifyListeners();
   }
 
   void getAllEventsFromFireStore() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection()
-        .orderBy("eventDateTime")
-        .get();
+        await FirebaseUtils.getEventCollection().orderBy("eventDateTime").get();
 
     filterNameList = mapEvents(querySnapshot);
 
@@ -61,10 +58,10 @@ class EventListProvider extends ChangeNotifier {
 
   void getFilteredEventFromFireStore() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection()
-        .orderBy("eventDateTime")
-        .where('eventName', isEqualTo: eventNameList[selectedIndex])
-        .get();
+        await FirebaseUtils.getEventCollection()
+            .orderBy("eventDateTime")
+            .where('eventName', isEqualTo: eventNameList[selectedIndex])
+            .get();
 
     filterNameList = mapEvents(querySnapshot);
 
@@ -73,17 +70,15 @@ class EventListProvider extends ChangeNotifier {
 
   void getFilteredEvents() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection().get();
+        await FirebaseUtils.getEventCollection().get();
 
     eventList = mapEvents(querySnapshot);
 
     filterNameList = eventList
-        .where((event) =>
-    event.eventName == eventNameList[selectedIndex])
+        .where((event) => event.eventName == eventNameList[selectedIndex])
         .toList();
 
-    filterNameList.sort((a, b) =>
-        a.eventDateTime.compareTo(b.eventDateTime));
+    filterNameList.sort((a, b) => a.eventDateTime.compareTo(b.eventDateTime));
 
     notifyListeners();
   }
@@ -95,9 +90,9 @@ class EventListProvider extends ChangeNotifier {
     favoriteEventList = eventList.where((e) => e.isFavorite == true).toList();
     notifyListeners();
 
-    await FirebaseUtils.getEventCollection()
-        .doc(event.id)
-        .update({"isFavorite": event.isFavorite});
+    await FirebaseUtils.getEventCollection().doc(event.id).update({
+      "isFavorite": event.isFavorite,
+    });
 
     ToastUtils.showToastMsg(msg: "Event Updated Successfully");
     selectedIndex == 0 ? getAllEvents() : getFilteredEvents();
@@ -107,25 +102,29 @@ class EventListProvider extends ChangeNotifier {
 
   void getAllFavoriteEvents() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection().get();
+        await FirebaseUtils.getEventCollection().get();
 
     // ✅ Use mapEvents() so id is always set
     eventList = mapEvents(querySnapshot);
-    favoriteEventList = eventList.where((event) => event.isFavorite == true).toList();
+    favoriteEventList = eventList
+        .where((event) => event.isFavorite == true)
+        .toList();
 
-    print(favoriteEventList.length);
+    favoriteEventList.sort((a, b) => a.eventDateTime.compareTo(b.eventDateTime));
     notifyListeners();
   }
 
   void getAllFavoriteEventsFromFireStore() async {
     QuerySnapshot<Event> querySnapshot =
-    await FirebaseUtils.getEventCollection().orderBy("eventDateTime").where('isFavorite', isEqualTo: true).get();
+        await FirebaseUtils.getEventCollection()
+            .orderBy("eventDateTime")
+            .where('isFavorite', isEqualTo: true)
+            .get();
 
     // Use mapEvents() so id is always set
     favoriteEventList = mapEvents(querySnapshot);
     notifyListeners();
   }
-
 
   void changeSelectedIndex(int newIndex) {
     selectedIndex = newIndex;
