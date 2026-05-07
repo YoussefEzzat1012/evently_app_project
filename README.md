@@ -35,7 +35,30 @@ This project follows **Clean Architecture** principles:
 
 ## 📸 Screenshots
 
-(Add screenshots here)
+### Login Screen
+![Login](assets/screenshots/loginScreen.png)
+
+
+### Create Event Screen
+![Profile](assets/screenshots/registerScreen.png)
+
+### Home Screen
+![Home](assets/screenshots/eventHomePage.png)
+
+### Create Event Screen
+![Profile](assets/screenshots/createEvent.png)
+
+### Create Event Screen Dark Mode
+![Profile](assets/screenshots/createEventDark.png)
+
+### Favorit Event Screen Dark Mode
+![Profile](assets/screenshots/createEvent.png)
+
+### Favorit Event Screen Dark Mode
+![Profile](assets/screenshots/profileScreen.png)
+
+
+
 
 ---
 
