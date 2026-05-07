@@ -43,8 +43,8 @@ class _ProfileTabState extends State<ProfileTab> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Route Academy', style: AppStyle.bold24White,),
-                    Text('RouteMoSalah74@gmail.com',
+                    Text('Youssef Ezzat', style: AppStyle.bold20White,),
+                    Text('ye1174@gmail.com',
                       style: AppStyle.regular20White,
                       softWrap: true,
                       maxLines: 2,)
