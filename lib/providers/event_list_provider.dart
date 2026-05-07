@@ -121,7 +121,7 @@ class EventListProvider extends ChangeNotifier {
     QuerySnapshot<Event> querySnapshot =
     await FirebaseUtils.getEventCollection().orderBy("eventDateTime").where('isFavorite', isEqualTo: true).get();
 
-    // ✅ Use mapEvents() so id is always set
+    // Use mapEvents() so id is always set
     favoriteEventList = mapEvents(querySnapshot);
     notifyListeners();
   }
