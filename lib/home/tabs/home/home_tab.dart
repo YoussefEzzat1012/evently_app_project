@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:route/home/tabs/home/widgets/event_item.dart';
 import 'package:route/home/tabs/home/widgets/event_tab_item.dart';
+import 'package:route/providers/event_list_provider.dart';
 import 'package:route/utils/app_styles.dart';
-
+import 'package:route/utils/firebase_utils.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../models/event.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 
@@ -15,23 +19,23 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  int selectedIndex = 0;
+  late EventListProvider eventListProvider;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      eventListProvider.getAllEvents();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List eventTabList = [
-      AppLocalizations.of(context)!.all,
-      AppLocalizations.of(context)!.sport,
-      AppLocalizations.of(context)!.birthday,
-      AppLocalizations.of(context)!.gaming,
-      AppLocalizations.of(context)!.meeting,
-      AppLocalizations.of(context)!.workshop,
-      AppLocalizations.of(context)!.bookClub,
-      AppLocalizations.of(context)!.holiday,
-      AppLocalizations.of(context)!.exception,
-    ];
-
-
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    eventListProvider = Provider.of<EventListProvider>(context);
+    eventListProvider.getEventNameList(context);
     List<String> eventImageList = [
       AppAssets.sportImage,
       AppAssets.birthdayImage,
@@ -42,8 +46,7 @@ class _HomeTabState extends State<HomeTab> {
       AppAssets.holidayImage,
       AppAssets.exceptionImage,
     ];
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -94,14 +97,14 @@ class _HomeTabState extends State<HomeTab> {
                   ],
                 ),
                 DefaultTabController(
-                  length: eventTabList.length,
+                  length: eventListProvider.eventNameList.length,
                   child: TabBar(
                     isScrollable: true,
                     labelPadding: EdgeInsets.zero,
                     tabAlignment: TabAlignment.start,
                     dividerColor: AppColors.transparentColor,
                     indicatorColor: AppColors.transparentColor,
-                    tabs: eventTabList
+                    tabs: eventListProvider.eventNameList
                         .map(
                           (e) => EventTabItem(
                             selectedTextStyle: Theme.of(
@@ -111,15 +114,16 @@ class _HomeTabState extends State<HomeTab> {
                             bgSelectedColor: Theme.of(context).focusColor,
                             borderColor: Theme.of(context).focusColor,
                             eventName: e,
-                            isSelected: selectedIndex == eventTabList.indexOf(e)
+                            isSelected:
+                                eventListProvider.selectedIndex ==
+                                    eventListProvider.eventNameList.indexOf(e)
                                 ? true
                                 : false,
                           ),
                         )
                         .toList(),
                     onTap: (index) {
-                      selectedIndex = index;
-                      setState(() {});
+                      eventListProvider.changeSelectedIndex(index);
                     },
                   ),
                 ),
@@ -127,12 +131,20 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) => EventItem(eventImageName: eventImageList[index],),
-              separatorBuilder: (context, index) =>
-                  SizedBox(height: height * 0.005),
-              itemCount: eventImageList.length,
-            ),
+            child: eventListProvider.filterNameList.isEmpty
+                ? Center(
+                    child: Text(
+                      "no events found",
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  )
+                : ListView.separated(
+                    itemBuilder: (context, index) =>
+                        EventItem(event: eventListProvider.filterNameList[index]),
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: height * 0.005),
+                    itemCount: eventListProvider.filterNameList.length,
+                  ),
           ),
         ],
       ),
