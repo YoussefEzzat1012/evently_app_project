@@ -39,7 +39,7 @@ This project follows **Clean Architecture** principles:
 ![Login](assets/screenShots/loginScreen.png)
 
 ### Register Screen
-![Register](assets/screenShots/register.png)
+![Register](assets/screenShots/registerScreen.png)
 
 ### Home Screen
 ![Home](assets/screenShots/eventHomePage.png)
