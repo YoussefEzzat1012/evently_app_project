@@ -54,8 +54,8 @@ class _HomeTabState extends State<HomeTab> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('مرحبا✨', style: AppStyle.bold20White),
-                Text('يوسف عزت', style: AppStyle.bold24White),
+                Text('Welcome✨', style: AppStyle.bold20White),
+                Text('Youssef Ezzat', style: AppStyle.bold24White),
                 SizedBox(height: height * 0.01)
               ],
             ),
@@ -95,7 +95,7 @@ class _HomeTabState extends State<HomeTab> {
                   children: [
                     SizedBox(width: width * 0.02,),
                     Icon(Icons.location_on, color: AppColors.whiteColor),
-                    Text('القاهرة, مصر', style: AppStyle.bold16White),
+                    Text('Cairo, Egypt', style: AppStyle.bold16White),
                   ],
                 ),
                 DefaultTabController(

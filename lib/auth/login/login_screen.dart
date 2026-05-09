@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:route/utils/dialog_utils.dart';
 
 import '../../home/widgets/custom_elevated_button.dart';
 import '../../home/widgets/cutsom_text_form_feild.dart';
@@ -10,7 +12,6 @@ import '../../utils/app_routes.dart';
 import '../../utils/app_styles.dart';
 
 class LoginScreen extends StatefulWidget {
-
   LoginScreen({super.key});
 
   @override
@@ -18,8 +19,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController(text: "ezzat22@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "123456");
+  TextEditingController emailController = TextEditingController(
+    text: "ezzat22@gmail.com",
+  );
+  TextEditingController passwordController = TextEditingController(
+    text: "123456",
+  );
 
   final formKey = GlobalKey<FormState>();
 
@@ -50,9 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (text == null || text.trim().isEmpty) {
                             return "Please enter your email";
                           }
-                          final bool emailValid =
-                          RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                              .hasMatch(text);
+                          final bool emailValid = RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                          ).hasMatch(text);
                           if (!emailValid) {
                             return "Please enter a valid email";
                           }
@@ -97,10 +102,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(AppLocalizations.of(context)!.dontHaveAccount , style: AppStyle.bold16Black,),
+                          Text(
+                            AppLocalizations.of(context)!.dontHaveAccount,
+                            style: AppStyle.bold16Black,
+                          ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.registerRouteName);
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.registerRouteName,
+                              );
                             },
                             child: Text(
                               AppLocalizations.of(context)!.createAccount,
@@ -110,25 +121,31 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                       Row(
                         children: [
-                          Expanded(child: Divider(
-                            color: AppColors.primaryColor,
-                            thickness: 2,
-                            indent: width * 0.02,
-                            endIndent: width * 0.02,
-                          )),
-                          Text(AppLocalizations.of(context)!.or, style: AppStyle.bold16Primary,),
-                          Expanded(child: Divider(
-                            color: AppColors.primaryColor,
-                            thickness: 2,
-                            indent: width * 0.02,
-                            endIndent: width * 0.02,
-                          )),
-                        ]
+                          Expanded(
+                            child: Divider(
+                              color: AppColors.primaryColor,
+                              thickness: 2,
+                              indent: width * 0.02,
+                              endIndent: width * 0.02,
+                            ),
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.or,
+                            style: AppStyle.bold16Primary,
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: AppColors.primaryColor,
+                              thickness: 2,
+                              indent: width * 0.02,
+                              endIndent: width * 0.02,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: height * 0.02),
                       CustomElevatedButton(
@@ -140,16 +157,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         hasIcon: true,
                         childIconWidget: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Bootstrap.google),
-                              SizedBox(width: width * 0.04),
-                              Text(AppLocalizations.of(context)!.loginWithGoogle, style: AppStyle.bold16Primary),
-                            ]),
+                          children: [
+                            Icon(Bootstrap.google),
+                            SizedBox(width: width * 0.04),
+                            Text(
+                              AppLocalizations.of(context)!.loginWithGoogle,
+                              style: AppStyle.bold16Primary,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -158,9 +178,38 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void login() {
-    if(formKey.currentState!.validate() == true) {
-      Navigator.restorablePopAndPushNamed(context, AppRoutes.homeRouteName);
+  void login() async {
+    if (formKey.currentState!.validate() == true) {
+      DialogUtils.showDidalog(context: context, message: "Loading...");
+      try {
+        final credential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            );
+        //todo: hide loading dialog
+        DialogUtils.hideDialog(context);
+        //todo: show message
+        DialogUtils.showMessage(context: context, message: "Loogin Successfully", title: "Success", posActionText: "OK" ,posAction: () {
+          Navigator.pushReplacementNamed(context, AppRoutes.homeRouteName);
+        });
+        print(credential.user?.uid ?? "no user found");
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-credential') {
+          //todo: hide loading dialog
+          DialogUtils.hideDialog(context);
+          //todo: show message
+          DialogUtils.showMessage(context: context, message: e.toString(), title: "Alert", posActionText: "OK" ,posAction: () {
+          });
+        }
+      } catch (e) {
+        //todo: hide loading dialog
+        DialogUtils.hideDialog(context);
+        //todo: show message
+        DialogUtils.showMessage(context: context, message: e.toString(), title: "Alert", posActionText: "OK" ,posAction: () {
+        });
+      }
+      //Navigator.restorablePopAndPushNamed(context, AppRoutes.homeRouteName);
     }
   }
 }
