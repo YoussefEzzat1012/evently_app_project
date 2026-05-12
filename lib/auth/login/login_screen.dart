@@ -1,15 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:route/providers/event_list_provider.dart';
 import 'package:route/utils/dialog_utils.dart';
 
 import '../../home/widgets/custom_elevated_button.dart';
 import '../../home/widgets/cutsom_text_form_feild.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/user_provider.dart';
 import '../../utils/app_assets.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_routes.dart';
 import '../../utils/app_styles.dart';
+import '../../utils/firebase_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -187,6 +191,13 @@ class _LoginScreenState extends State<LoginScreen> {
               email: emailController.text,
               password: passwordController.text,
             );
+        var user = await FirebaseUtils.getUserFromFirebaseFireStore(credential.user?.uid ?? "");
+        if (user == null) {
+          return;
+        }
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(0, user.id);
+        Provider.of<EventListProvider>(context, listen: false).getAllFavoriteEvents(user.id);
         //todo: hide loading dialog
         DialogUtils.hideDialog(context);
         //todo: show message
@@ -199,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
           //todo: hide loading dialog
           DialogUtils.hideDialog(context);
           //todo: show message
-          DialogUtils.showMessage(context: context, message: e.toString(), title: "Alert", posActionText: "OK" ,posAction: () {
+          DialogUtils.showMessage(context: context, message: "Email or password is not correct", title: "Alert", posActionText: "OK" ,posAction: () {
           });
         }
       } catch (e) {
