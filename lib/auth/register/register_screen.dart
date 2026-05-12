@@ -1,15 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:route/models/my_user.dart';
+import 'package:route/utils/firebase_utils.dart';
 
 import '../../home/widgets/custom_elevated_button.dart';
 import '../../home/widgets/cutsom_text_form_feild.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/event_list_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../utils/app_assets.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_routes.dart';
 import '../../utils/app_styles.dart';
 import '../../utils/dialog_utils.dart';
+import '../../utils/dialog_utils.dart' as FirbaseUtils;
 
 class RegisterScreen extends StatefulWidget {
 
@@ -176,6 +182,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         //todo: hide loading dialog
         DialogUtils.hideDialog(context);
+        MyUser user = MyUser(
+          id: credential.user?.uid ?? "",
+          name: nameController.text,
+          email: emailController.text,
+        );
+        await FirebaseUtils.addUserToFirebase(user);
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(0, user.id);
+
         //todo: show message
         DialogUtils.showMessage(context: context, message: "Registered Successfully", title: "Success", posActionText: "OK" ,posAction: () {
           Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeRouteName, (route) => false);

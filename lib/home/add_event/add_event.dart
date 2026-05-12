@@ -5,6 +5,7 @@ import 'package:route/home/add_event/widgets/date_or_time_widget.dart';
 import 'package:route/providers/event_list_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/event.dart';
+import '../../providers/user_provider.dart';
 import '../../utils/app_assets.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_styles.dart';
@@ -33,8 +34,9 @@ class _AddEventState extends State<AddEvent> {
   var descriptionController = TextEditingController();
   late EventListProvider eventListProvider;
   late List<String> eventListName;
-  List<String> tabsName = [];
+  late UserProvider userProvider;
 
+  List<String> tabsName = [];
   List<String> eventImageList = [
     AppAssets.sportImage,
     AppAssets.birthdayImage,
@@ -50,7 +52,8 @@ class _AddEventState extends State<AddEvent> {
   Widget build(BuildContext context) {
     eventListProvider = Provider.of<EventListProvider>(context);
     eventListName = eventListProvider.getEventNameList(context);
-     tabsName = eventListProvider.eventNameList
+    userProvider = Provider.of<UserProvider>(context);
+    tabsName = eventListProvider.eventNameList
         .where((e) => e != AppLocalizations.of(context)!.all)
         .toList();
     var height = MediaQuery.of(context).size.height;
@@ -73,7 +76,9 @@ class _AddEventState extends State<AddEvent> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(eventImageList[eventListProvider.selectedIndex]),
+                  child: Image.asset(
+                    eventImageList[eventListProvider.selectedIndex],
+                  ),
                 ),
                 SizedBox(height: height * 0.02),
                 SizedBox(
@@ -82,7 +87,7 @@ class _AddEventState extends State<AddEvent> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) => InkWell(
                       onTap: () {
-                        eventListProvider.changeSelectedIndex(index);
+                        eventListProvider.changeSelectedIndex(index, userProvider.currentUser!.id);
                       },
                       child: EventTabItem(
                         borderColor: AppColors.primaryColor,
@@ -91,7 +96,7 @@ class _AddEventState extends State<AddEvent> {
                         ).textTheme.titleMedium!,
                         unSelectedTextStyle: AppStyle.bold16Primary,
                         bgSelectedColor: AppColors.primaryColor,
-                        eventName:  tabsName[index],
+                        eventName: tabsName[index],
                         isSelected: eventListProvider.selectedIndex == index,
                       ),
                     ),
@@ -264,24 +269,37 @@ class _AddEventState extends State<AddEvent> {
         eventDateTime: selectedDate!,
         eventTime: formatTime!,
       );
-      FirebaseUtils.addEventToFirebase(event).timeout(
-        Duration(seconds: 1),
-        onTimeout: () {
-          //alert dialog - toast - snack bar
-          Fluttertoast.showToast(
-            msg: "event added successfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 2,);
-          Navigator.pop(context);
-        },
-      );
+      FirebaseUtils.addEventToFirebase(event, userProvider.currentUser!.id)
+          .then((value) {
+            //alert dialog - toast - snack bar
+            Fluttertoast.showToast(
+              msg: "event added successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+            );
+            Navigator.pop(context);
+          })
+          .timeout(
+            Duration(seconds: 1),
+            onTimeout: () {
+              //alert dialog - toast - snack bar
+              Fluttertoast.showToast(
+                msg: "event added successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 2,
+              );
+              Navigator.pop(context);
+            },
+          );
     }
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
+    eventListProvider.getAllEvents(userProvider.currentUser!.id);
     super.dispose();
-    eventListProvider.getAllEvents();
   }
 }

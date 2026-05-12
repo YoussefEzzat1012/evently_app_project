@@ -7,6 +7,7 @@ import 'package:route/home/tabs/map/map.dart';
 import 'package:route/providers/app_language_provider.dart';
 import 'package:route/providers/app_theme_provider.dart';
 import 'package:route/providers/event_list_provider.dart';
+import 'package:route/providers/user_provider.dart';
 import 'package:route/utils/app_routes.dart';
 import 'package:route/utils/app_theme.dart';
 import 'auth/login/login_screen.dart';
@@ -24,13 +25,14 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseFirestore.instance.disableNetwork();
+ // await FirebaseFirestore.instance.disableNetwork();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppLanguageProvider()),
         ChangeNotifierProvider(create: (context) => AppThemeProvider()),
         ChangeNotifierProvider(create: (context) => EventListProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
         child: MyApp()
     )

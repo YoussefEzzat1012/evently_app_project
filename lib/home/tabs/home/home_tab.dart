@@ -8,6 +8,7 @@ import 'package:route/utils/app_styles.dart';
 import 'package:route/utils/firebase_utils.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../models/event.dart';
+import '../../../providers/user_provider.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 
@@ -20,13 +21,15 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   late EventListProvider eventListProvider;
+  late UserProvider userProvider;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      eventListProvider.getAllEvents();
+      eventListProvider.getAllEvents(userProvider.currentUser!.id);
     });
   }
 
@@ -35,6 +38,7 @@ class _HomeTabState extends State<HomeTab> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     eventListProvider = Provider.of<EventListProvider>(context);
+     userProvider = Provider.of<UserProvider>(context);
     eventListProvider.getEventNameList(context);
     List<String> eventImageList = [
       AppAssets.sportImage,
@@ -55,7 +59,7 @@ class _HomeTabState extends State<HomeTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Welcome✨', style: AppStyle.bold20White),
-                Text('Youssef Ezzat', style: AppStyle.bold24White),
+                Text(userProvider.currentUser!.name, style: AppStyle.bold24White),
                 SizedBox(height: height * 0.01)
               ],
             ),
@@ -125,7 +129,7 @@ class _HomeTabState extends State<HomeTab> {
                         )
                         .toList(),
                     onTap: (index) {
-                      eventListProvider.changeSelectedIndex(index);
+                      eventListProvider.changeSelectedIndex(index, userProvider.currentUser!.id);
                     },
                   ),
                 ),

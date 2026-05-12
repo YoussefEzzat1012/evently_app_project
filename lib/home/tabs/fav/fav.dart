@@ -4,6 +4,7 @@ import 'package:route/utils/app_styles.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../providers/event_list_provider.dart';
+import '../../../providers/user_provider.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 import '../../widgets/cutsom_text_form_feild.dart';
@@ -20,13 +21,15 @@ class FavTab extends StatefulWidget {
 class _FavTabState extends State<FavTab> {
   TextEditingController searchController = TextEditingController();
   late EventListProvider eventListProvider;
+  late UserProvider userProvider;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // ✅ بنجيب الـ provider هنا صح
       eventListProvider = Provider.of<EventListProvider>(context, listen: false);
-      eventListProvider.getAllFavoriteEvents();
+      eventListProvider.getAllFavoriteEvents(userProvider.currentUser!.id);
     });
   }
 
