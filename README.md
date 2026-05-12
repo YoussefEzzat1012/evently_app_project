@@ -19,8 +19,6 @@ A cross-platform mobile application built using Flutter that allows users to cre
 * Flutter & Dart
 * Firebase (Authentication, Firestore)
 * State Management: Provider
-* REST APIs
-
 ---
 
 ## 🧠 Architecture
