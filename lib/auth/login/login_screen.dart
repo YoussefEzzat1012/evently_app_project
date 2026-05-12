@@ -198,10 +198,6 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<UserProvider>(context, listen: false).updateUser(user);
         Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(0, user.id);
         Provider.of<EventListProvider>(context, listen: false).getAllFavoriteEvents(user.id);
-
-
-
-
         //todo: hide loading dialog
         DialogUtils.hideDialog(context);
         //todo: show message
@@ -214,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
           //todo: hide loading dialog
           DialogUtils.hideDialog(context);
           //todo: show message
-          DialogUtils.showMessage(context: context, message: e.toString(), title: "Alert", posActionText: "OK" ,posAction: () {
+          DialogUtils.showMessage(context: context, message: "Email or password is not correct", title: "Alert", posActionText: "OK" ,posAction: () {
           });
         }
       } catch (e) {

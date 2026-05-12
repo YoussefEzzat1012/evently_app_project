@@ -40,6 +40,7 @@ class _FavTabState extends State<FavTab> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     eventListProvider = Provider.of<EventListProvider>(context);
+    userProvider = Provider.of<UserProvider>(context);
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: width * 0.04),

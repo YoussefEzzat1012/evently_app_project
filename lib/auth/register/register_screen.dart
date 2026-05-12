@@ -151,15 +151,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         ],
                       ),
-                      SizedBox(height: height * 0.02),
-                      CustomElevatedButton(
-                        onPressed: register,
-                        text: AppLocalizations.of(context)!.loginWithGoogle,
-                        backGroundColor: AppColors.primaryColor,
-                        borderColor: AppColors.primaryColor,
-                        textStyle: AppStyle.bold20Primary,
-                        hasIcon: true,
-                      ),
                     ],
                   ),
                 ),
