@@ -45,6 +45,7 @@ class LoginViewModel extends ChangeNotifier {
         navigator.hideMyLoading();
         //todo: show message
         navigator.showMyMessage(message: "Loogin Successfully");
+        navigator.navigateToHomeScreen();
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-credential') {
           //todo: hide loading dialog

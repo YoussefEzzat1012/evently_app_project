@@ -28,12 +28,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavigator{
-  TextEditingController emailController = TextEditingController(text: "ezzat22@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "123456");
-  TextEditingController nameController = TextEditingController(text: "youssef");
-  TextEditingController rePasswordController = TextEditingController(text: "123456");
 
-  final formKey = GlobalKey<FormState>();
   RegisterViewModel viewModel = RegisterViewModel();
   @override
   void initState() {
@@ -65,13 +60,13 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                   Image.asset(AppAssets.logo),
                   SizedBox(height: height * 0.02),
                   Form(
-                    key: formKey,
+                    key: viewModel.formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         CutsomTextFormFeild(
                           keyboardType: TextInputType.emailAddress,
-                          controller: nameController,
+                          controller: viewModel.nameController,
                           prefixIcon: Image.asset(AppAssets.iconName),
                           hintText: AppLocalizations.of(context)!.name,
                           validator: (text) {
@@ -85,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                         SizedBox(height: height * 0.02),
                         CutsomTextFormFeild(
                           keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
+                          controller: viewModel.emailController,
                           prefixIcon: Image.asset(AppAssets.emailIcon),
                           hintText: AppLocalizations.of(context)!.email,
                           validator: (text) {
@@ -103,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                         ),
                         SizedBox(height: height * 0.02),
                         CutsomTextFormFeild(
-                          controller: passwordController,
+                          controller: viewModel.passwordController,
                           prefixIcon: Image.asset(AppAssets.passwordIcon),
                           suffixIcon: Image.asset(AppAssets.iconShowPassword),
                           obSecureText: true,
@@ -121,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                         ),
                         SizedBox(height: height * 0.02),
                         CutsomTextFormFeild(
-                          controller: rePasswordController,
+                          controller: viewModel.rePasswordController,
                           prefixIcon: Image.asset(AppAssets.passwordIcon),
                           suffixIcon: Image.asset(AppAssets.iconShowPassword),
                           obSecureText: true,
@@ -131,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                             if (text == null || text.trim().isEmpty) {
                               return "Please enter your password";
                             }
-                            if (text != passwordController.text) {
+                            if (text != viewModel.passwordController.text) {
                               return "Passwords do not match";
                             }
                             return null;
@@ -139,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
                         ),
                         SizedBox(height: height * 0.02),
                         CustomElevatedButton(
-                          onPressed: register,
+                          onPressed: viewModel.register,
                           text: AppLocalizations.of(context)!.register,
                           textStyle: AppStyle.bold20White,
                         ),
@@ -174,12 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
     );
   }
 
-  void register() async{
-    if(formKey.currentState!.validate() == true) {
-        viewModel.register(emailController.text, passwordController.text);
-        //Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeRouteName, (route) => false);
-    }
-  }
+
 
   @override
   void hideMyLoading() {
@@ -196,6 +186,30 @@ class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavi
   @override
     void showMyMessage({required String message}) {
     // TODO: implement showMyMessage
-    DialogUtils.showMessage(context: context, message: message, title: "Alert", posActionText: "OK");
+    DialogUtils.showMessage(context: context, message: message, title: "Alert", posActionText: "OK", );
+  }
+
+  @override
+  void navigateToHomeScreen() {
+    // TODO: implement navigateToHomeScreen
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeRouteName, (route) => false);
+  }
+
+  @override
+  void updateUserProvider({required MyUser user}) {
+    // TODO: implement updateUserProvider
+
+    Provider.of<UserProvider>(context, listen: false).updateUser(user);
+  }
+
+  @override
+  void changeSelectedIndex({required int index, required String userId}) {
+    // TODO: implement changeSelectedIndex
+    Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(index, userId);
+  }
+
+  @override
+  void getAllFavoriteEvents({required String userId}) {
+    // TODO: implement getAllFavoriteEvents
   }
 }

@@ -207,7 +207,6 @@ class _LoginScreenState extends State<LoginScreen> implements LoginNavigator {
       message: message,
       title: "Alert",
       posActionText: "OK",
-      posAction: navigateToHomeScreen,
     );
   }
 

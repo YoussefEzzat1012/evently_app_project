@@ -5,43 +5,56 @@ import 'package:route/auth/register/register_navigator.dart';
 
 import '../../models/my_user.dart';
 import '../../utils/dialog_utils.dart';
+import '../../utils/firebase_utils.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   //todo: hold data - handle logic
   late RegisterNavigator navigator;
-  void register(String email, String password) async{
-    navigator.showMyLoading(message: "Loading...");
-    try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      //todo: hide loading dialog
-      navigator.hideMyLoading();
-      //todo: show message
-      navigator.showMyMessage(message: "Registered Successfully",);
+  final formKey = GlobalKey<FormState>();
+  //todo: data
+  TextEditingController emailController = TextEditingController(text: "ezzat22@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "123456");
+  TextEditingController nameController = TextEditingController(text: "youssef");
+  TextEditingController rePasswordController = TextEditingController(text: "123456");
 
-      // MyUser user = MyUser(
-      //   id: credential.user?.uid ?? "",
-      //   name: nameController.text,
-      //   email: email,
-      // );
-      // await FirebaseUtils.addUserToFirebase(user);
-      // Provider.of<UserProvider>(context, listen: false).updateUser(user);
-      // Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(0, user.id);
-      //
-      // //todo: show message
-      // DialogUtils.showMessage(context: context, message: "Registered Successfully", title: "Success", posActionText: "OK" ,posAction: () {
-      //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeRouteName, (route) => false);
-      // });
-    } on FirebaseAuthException catch (e) {
-      //todo: hide loading dialog
-      navigator.hideMyLoading();
-      //todo: show message
-      navigator.showMyMessage(message: "The email address is already in use by another account..",);
-    } catch (e) {
-      navigator.hideMyLoading();
-      navigator.showMyMessage(message: e.toString());
+  void register() async {
+    if (formKey.currentState!.validate() == true) {
+      navigator.showMyLoading(message: "Loading...");
+      try {
+        final credential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        final userAuth = credential.user;
+        if (userAuth == null) {
+          throw Exception("User is null after registration");
+        }
+        MyUser user = MyUser(
+          id: userAuth.uid,
+          name: nameController.text,
+          email: emailController.text,
+        );
+        print(user.toString());
+        await FirebaseUtils.addUserToFirebase(user);
+        navigator.updateUserProvider(user: user);
+        navigator.changeSelectedIndex(index: 0, userId: user.id);
+        //todo: hide loading dialog
+        navigator.hideMyLoading();
+        //todo: show message
+        navigator.showMyMessage(message: "Registered Successfully",);
+        navigator.navigateToHomeScreen();
+
+      } on FirebaseAuthException catch (e) {
+        //todo: hide loading dialog
+        navigator.hideMyLoading();
+        //todo: show message
+        navigator.showMyMessage(
+          message: "The email address is already in use by another account..",);
+      } catch (e) {
+        navigator.hideMyLoading();
+        navigator.showMyMessage(message: e.toString());
+      }
     }
   }
 }
