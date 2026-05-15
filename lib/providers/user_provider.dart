@@ -9,6 +9,7 @@ class UserProvider extends ChangeNotifier{
 
   void updateUser(MyUser newUser) {
     currentUser = newUser;
+    print("🔥 USER UPDATED: ${newUser.name}");
     notifyListeners();
   }
 }

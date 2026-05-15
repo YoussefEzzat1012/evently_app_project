@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:route/auth/login/loginViewModel.dart';
+import 'package:route/models/my_user.dart';
 import 'package:route/providers/event_list_provider.dart';
 import 'package:route/utils/dialog_utils.dart';
-
 import '../../home/widgets/custom_elevated_button.dart';
 import '../../home/widgets/cutsom_text_form_feild.dart';
 import '../../l10n/app_localizations.dart';
@@ -14,6 +15,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_routes.dart';
 import '../../utils/app_styles.dart';
 import '../../utils/firebase_utils.dart';
+import 'loginNavigator.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -22,15 +24,16 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController(
-    text: "ezzat22@gmail.com",
-  );
-  TextEditingController passwordController = TextEditingController(
-    text: "123456",
-  );
+class _LoginScreenState extends State<LoginScreen> implements LoginNavigator {
+  LoginViewModel viewModel = LoginViewModel();
 
-  final formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     viewModel.navigator = this;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset(AppAssets.logo),
                 SizedBox(height: height * 0.02),
                 Form(
-                  key: formKey,
+                  key: viewModel.formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       CutsomTextFormFeild(
                         keyboardType: TextInputType.emailAddress,
-                        controller: emailController,
+                        controller: viewModel.emailController,
                         prefixIcon: Image.asset(AppAssets.emailIcon),
                         hintText: AppLocalizations.of(context)!.email,
                         validator: (text) {
@@ -70,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: height * 0.02),
                       CutsomTextFormFeild(
-                        controller: passwordController,
+                        controller: viewModel.passwordController,
                         prefixIcon: Image.asset(AppAssets.passwordIcon),
                         suffixIcon: Image.asset(AppAssets.iconShowPassword),
                         obSecureText: true,
@@ -99,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       CustomElevatedButton(
-                        onPressed: login,
+                        onPressed: viewModel.login,
                         text: AppLocalizations.of(context)!.login,
                         textStyle: AppStyle.bold20White,
                       ),
@@ -153,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: height * 0.02),
                       CustomElevatedButton(
-                        onPressed: login,
+                        onPressed: viewModel.login,
                         text: AppLocalizations.of(context)!.loginWithGoogle,
                         backGroundColor: AppColors.whiteColor,
                         borderColor: AppColors.primaryColor,
@@ -182,45 +185,52 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void login() async {
-    if (formKey.currentState!.validate() == true) {
-      DialogUtils.showDidalog(context: context, message: "Loading...");
-      try {
-        final credential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-              email: emailController.text,
-              password: passwordController.text,
-            );
-        var user = await FirebaseUtils.getUserFromFirebaseFireStore(credential.user?.uid ?? "");
-        if (user == null) {
-          return;
-        }
-        Provider.of<UserProvider>(context, listen: false).updateUser(user);
-        Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(0, user.id);
-        Provider.of<EventListProvider>(context, listen: false).getAllFavoriteEvents(user.id);
-        //todo: hide loading dialog
-        DialogUtils.hideDialog(context);
-        //todo: show message
-        DialogUtils.showMessage(context: context, message: "Loogin Successfully", title: "Success", posActionText: "OK" ,posAction: () {
-          Navigator.pushReplacementNamed(context, AppRoutes.homeRouteName);
-        });
-        print(credential.user?.uid ?? "no user found");
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'invalid-credential') {
-          //todo: hide loading dialog
-          DialogUtils.hideDialog(context);
-          //todo: show message
-          DialogUtils.showMessage(context: context, message: "Email or password is not correct", title: "Alert", posActionText: "OK" ,posAction: () {
-          });
-        }
-      } catch (e) {
-        //todo: hide loading dialog
-        DialogUtils.hideDialog(context);
-        //todo: show message
-        DialogUtils.showMessage(context: context, message: e.toString(), title: "Alert", posActionText: "OK" ,posAction: () {
-        });
-      }
-      //Navigator.restorablePopAndPushNamed(context, AppRoutes.homeRouteName);
-    }
+
+
+  @override
+  void hideMyLoading() {
+    // TODO: implement hideMyLoading
+    DialogUtils.hideDialog(context);
+  }
+
+  @override
+  void showMyLoading({required String message}) {
+    // TODO: implement showMyLoading
+    DialogUtils.showDidalog(context: context, message: message);
+  }
+
+  @override
+  void showMyMessage({required String message}) {
+    // TODO: implement showMyMessage
+    DialogUtils.showMessage(
+      context: context,
+      message: message,
+      title: "Alert",
+      posActionText: "OK",
+    );
+  }
+
+  @override
+  void navigateToHomeScreen() {
+    // TODO: implement navigateToHomeScreen
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeRouteName, (route) => false);
+  }
+
+  @override
+  void updateUserProvider({required MyUser user}) {
+    // TODO: implement updateUserProvider
+    Provider.of<UserProvider>(context, listen: false).updateUser(user);
+  }
+
+  @override
+  void changeSelectedIndex({required int index, required String userId}) {
+    // TODO: implement changeSelectedIndex
+    Provider.of<EventListProvider>(context, listen: false).changeSelectedIndex(index, userId);
+  }
+
+  @override
+  void getAllFavoriteEvents({required String userId}) {
+    // TODO: implement getAllFavoriteEvents
+    Provider.of<EventListProvider>(context, listen: false).getAllFavoriteEvents(userId);
   }
 }
